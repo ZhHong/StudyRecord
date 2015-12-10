@@ -1,0 +1,174 @@
+---
+查找方法
+find(tag1) or find(content)
+---
+tag1:迁移数据
+MongoVUE 可以实现mysql数据导入mongodb
+-- 创建好需要导入的数据库连接上mysql和mongodb 选择数据库表导入
+
+-- 导入后 内容比较
+			mysql            mongodb
+
+user_info 	table			 connection
+sql_record	sql_record       document
+
+tag2:查询比较
+1)普通查询
+mysql:
+select roleName from user_info where playerId=30001;
+mongodb:
+db.user_info.find({playerId:30001},{roleName:true}).forEach(printjson)
+
+就查询来说目前看起来sql更为简洁 效率未知
+db.user_info.findOne({playerId:30001},{roleName:true})
+-- 发现findOne后当我没说前面那句话
+
+-- 限制limit
+select playerId from user_info where user_info.level>20 limit 10;
+
+db.user_info.find({},{playerId:true}).limit(10);
+db.user_info.find({level:{$gt:10}},{level:true,playerId:true}).limit(10);
+
+2)条件查询
+mongodb查询的语法（大于，小于，大于或等于，小于或等于等等）大于，小于，大于或等于，小于或等于
+
+$gt:大于
+$lt:小于
+$gte:大于或等于
+$lte:小于或等于
+
+例子：
+大于
+-- select field from table where field > num limit max;
+-- db.collection.find({ "field" : { $gt: value } } ); // greater than : field > value
+--- select playerId,level from user_info where user_info.level>10 limit 10;
+--- db.user_info.find({level:{$gt:10}},{playerId:true,level:true}).limit(10);
+
+小于
+-- select field from table where field<num limit max
+-- db.collection.find({ "field" : { $lt: value } } ); // less than : field < value
+--- select playerId,level from user_info where user_info.level<5 limit 5;
+--- db.user_info.find({level:{$lt:5}},{playerId:true,level:true}).limit(5);
+
+-- db.collection.find({ "field" : { $gte: value } } ); // greater than or equal to : field >= value
+-- db.collection.find({ "field" : { $lte: value } } ); // less than or equal to : field <= value
+-- 如查询j大于3,小于4:
+-- db.things.find({j : {$lt: 3}});
+-- db.things.find({j : {$gte: 4}});
+-- 也可以合并在一条语句内:
+-- db.collection.find({ "field" : { $gt: value1, $lt: value2 } } ); // value1 < field < value
+-- 2) 不等于 $ne
+-- 例子：
+-- db.things.find( { x : { $ne : 3 } } );
+
+
+3) in 和 not in ($in $nin)
+
+语法：
+-- select playerId,level from user_info where playerId in (30001,30002,30003);
+-- db.collection.find( { "field" : { $in : array } } );
+-- db.user_info.find({playerId:{$in:[30001,30002,30003]}},{playerId:true,level:true});
+例子：
+db.things.find({j:{$in: [2,4,6]}});
+db.things.find({j:{$nin: [2,4,6]}});
+
+
+4) 取模运算$mod
+
+如下面的运算：
+db.things.find( "this.a % 10 == 1")
+可用$mod代替：
+db.things.find( { a : { $mod : [ 10 , 1 ] } } )
+
+
+5)  $all
+
+$all和$in类似，但是他需要匹配条件内所有的值：
+
+如有一个对象：
+
+{ a: [ 1, 2, 3 ] }
+下面这个条件是可以匹配的：
+db.things.find( { a: { $all: [ 2, 3 ] } } );
+但是下面这个条件就不行了：
+db.things.find( { a: { $all: [ 2, 3, 4 ] } } );
+
+6)  $size
+
+$size是匹配数组内的元素数量的，如有一个对象：{a:["foo"]}，他只有一个元素：
+
+下面的语句就可以匹配：db.things.find( { a : { $size: 1 } } );
+官网上说不能用来匹配一个范围内的元素，如果想找$size<5之类的，他们建议创建一个字段来保存元素的数量。
+You cannot use $size to find a range of sizes (for example: arrays with more than 1 element). If you need to query for a range, create an extra size field that you increment when you add elements.
+7）$exists
+$exists用来判断一个元素是否存在：
+如：
+db.things.find( { a : { $exists : true } } ); // 如果存在元素a,就返回
+db.things.find( { a : { $exists : false } } ); // 如果不存在元素a，就返回
+
+8)  $type
+
+$type 基于 bson type来匹配一个元素的类型，像是按照类型ID来匹配，不过我没找到bson类型和id对照表。
+db.things.find( { a : { $type : 2 } } ); // matches if a is a string
+db.things.find( { a : { $type : 16 } } ); // matches if a is an int
+9）正则表达式
+
+mongo支持正则表达式，如：
+
+db.customers.find( { name : /acme.*corp/i } ); // 后面的i的意思是区分大小写
+
+10)  查询数据内的值
+
+下面的查询是查询colors内red的记录，如果colors元素是一个数据,数据库将遍历这个数组的元素来查询。db.things.find( { colors : "red" } );
+
+11) $elemMatch
+
+如果对象有一个元素是数组，那么$elemMatch可以匹配内数组内的元素：
+
+> t.find( { x : { $elemMatch : { a : 1, b : { $gt : 1 } } } } ) 
+{ "_id" : ObjectId("4b5783300334000000000aa9"), 
+"x" : [ { "a" : 1, "b" : 3 }, 7, { "b" : 99 }, { "a" : 11 } ]
+}$elemMatch : { a : 1, b : { $gt : 1 } } 所有的条件都要匹配上才行。
+注意，上面的语句和下面是不一样的。
+> t.find( { "x.a" : 1, "x.b" : { $gt : 1 } } )
+$elemMatch是匹配{ "a" : 1, "b" : 3 }，而后面一句是匹配{ "b" : 99 }, { "a" : 11 } 
+
+
+12)  查询嵌入对象的值
+
+db.postings.find( { "author.name" : "joe" } );
+注意用法是author.name，用一个点就行了。更详细的可以看这个链接： dot notation
+举个例子：
+> db.blog.save({ title : "My First Post", author: {name : "Jane", id : 1}})
+如果我们要查询 authors name 是Jane的, 我们可以这样：
+> db.blog.findOne({"author.name" : "Jane"})
+如果不用点，那就需要用下面这句才能匹配：
+db.blog.findOne({"author" : {"name" : "Jane", "id" : 1}})
+下面这句：
+db.blog.findOne({"author" : {"name" : "Jane"}})
+是不能匹配的，因为mongodb对于子对象，他是精确匹配。
+13) 元操作符 $not 取反
+如：
+db.customers.find( { name : { $not : /acme.*corp/i } } );db.things.find( { a : { $not : { $mod : [ 10 , 1 ] } } } ); mongodb还有很多函数可以用，如排序，统计等，请参考原文。
+
+mongodb目前没有或(or)操作符，只能用变通的办法代替，可以参考下面的链接：
+
+http://www.mongodb.org/display/DOCS/OR+operations+in+query+expressions
+
+
+tag3:更新修改
+
+-- update user_info set user_info.level =99 where playerId =30001;
+-- db.user_info.update({playerId:30001},{$set:{level:99}});
+--- db.connection.update({field:val},{$set:{field:val}});
+
+-- 删除
+-- delete from table where wherecaulse
+-- delete from user_info where level =99;
+-- db.connection.remove({field:value});
+-- db.user_info.remove({playerId:30001});
+--  都是删除满足条件的一条记录 Todo  级联删除
+
+
+tag4:统计
+

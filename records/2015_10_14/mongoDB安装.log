@@ -1,0 +1,16 @@
+1，环境变量(可选)
+2，创建config文件
+
+---config内容---主要是指定MongoDB的运行参数
+##数据文件
+dbpath=D:\MongoDB_DATA
+
+##日志文件
+logpath=D:\MongoDB_DATA\logs\mongodb.log
+
+3,如果是运行数据库 则使用
+	mongod.exe --config D:\MongoDB_DATA\mongo.config
+  如果要安装数据库服务(需要在管理员模式下安装)
+	mongod.exe --config D:\MongoDB_DATA\mongo.config --install
+
+4,连接数据库用mongo(添加了环境变量)

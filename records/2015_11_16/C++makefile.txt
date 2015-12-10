@@ -1,0 +1,266 @@
+假设我们有下面这样的一个程序，源代码如下：
+********illustrate:**********
+ there ere three files class.h class.c++ main1.c++
+
+//*********list class.h**********
+class tdate
+{
+private:
+int month;
+int day;
+int year;
+public:
+//you must define a contructor which didn't include parameters
+//when have one or more contructor which have one or more parameters
+tdate();
+tdate(int t_month, int t_day, int t_year)
+{
+month=t_month;
+day=t_day;
+year=t_year;
+}
+//tdate(const tdate &obj)
+//{}
+void display();
+};
+
+//********list class.c++:************
+
+#include 
+#include "class.h"
+void tdate::display()
+{
+cout<<"the current month== "< }
+
+*************list main1.c++:************
+
+#include 
+#include "class.h"//need class tdate
+int main()
+{
+tdate t1(12,30,2007);
+tdate t2=tdate(12,31,2007);//impractical but allowed
+tdate t3=t2;//invoking the copy contructor
+//the method is can not running normal
+//tdate t4(t1)
+//it can running normal
+tdate t4(t2);
+t1.display();
+t2.display();
+t3.display();
+t4.display();
+return 0;
+}
+
+
+当然由于这个程序很短，我们可以这样来编译:
+
+g++ -c class.c++
+
+g++ -o main1 main1.c++ class.o
+
+ 这样的话我们也可以产生main程序，而且也不是很麻烦。但是如果我们考虑一下如果有一天我们修改了其中的一个文件(比如说class1.c++)那么我们难道还要重新输入上面的命令?也许你会说，这个很容易解决啊，我写一个 SHELL脚本，让它帮我去完成不就可以了。是的对于这个程序来说，是可以起到作用的。但是当我们把事情想的更复杂一点，如果我们的程序有几百个源程序的时候，难道也要编译器重新一个一个的去编译?因为SHELL脚本将全部编译作任何源文件，包括那些不必要重新编译的源文件，而make工具则可根据目标上一次编译的时间和目标文件所依赖的源文件的更新时间而自动判断应当编译哪个源文件
+
+现在我们来编写这个makefile文件
+(文件名为makefile)
+**********list makefile*******
+# 这是上面那个程序的Makefile文件:
+
+main1：main1.o class.o
+    g++ -o main1 main1.o class.o
+main1.o: main1.c++ class.h
+    g++ -c main1.c++
+class.o: class.c++ class.h
+    g++ -c class.c++
+clean:
+    rm *.o
+*******it is over**********
+现在在shell下输入make
+结果如下：
+[zhanghong@localhost c++]$ make
+g++ -c class.c++
+In file included from /usr/include/c++/3.2.2/backward/iostream.h:31,
+                 from class.c++:1:
+/usr/include/c++/3.2.2/backward/backward_warning.h:32:2: warning: #warning This
+file includes at least one deprecated or antiquated header. Please consider using one of the 32 headers found in section 17.4.1.2 of the C++ standard. Examples
+include substituting the header for the header for C++ includes, or instead of the deprecated header . To disable this warning
+use -Wno-deprecated.
+#g++ -o main1 main1.o class.o
+g++ -o main1 main1.o class.o
+[zhanghong@localhost c++]$
+再输入./main1就可以运行程序
+如：[zhanghong@localhost c++]$./main1
+
+有了这个Makefile文件，不论我们什么时候修改了源程序当中的什么文件，我们只要执行make命令，我们的编译器都只会去编译和我们修改的文件有关的文件，其它的文件它连理都不想去理的。
+当在shell下输入 make clean时，将调用rm *.o命令，即makefile文件中的最后一个命令
+如：[zhanghong@localhost c++]$ make clean
+    rm *.o
+
+下面我们学习Makefile是如何编写的。
+
+在Makefile中以#开始的行都是注释行。Makefile中最重要的是描述文件的依赖关系的说明。
+一般的格式是：
+target：dependency [dependency [........] ]
+    command
+    command
+    [.............]
+
+目标（target）：make最终要创建的文件
+依赖关系列表(dependency): 通过这张列表可以知道编译目标需要用到的文件
+命令列表（command）: 为了从指定的依赖关系创建创建出目标文件而需要执行的命令。这些命令不仅是编译命令，还可以shell命令。
+
+第一行表示的是依赖关系。第二行是命令。
+
+比如说我们上面的那个Makefile文件的第一行。
+
+main1：main1.o class.o
+
+表示我们的目标(target)main的依赖对象(dependency)是main1.o class.o 当依赖的对象在目标修改后修改的话，就要去执行规则一行所指定的命令。就象我们的上面那个Makefile第二行所说的一样要执行 g++ -o main1 main1.o class.o 
+  
+注意:命令行是以TAB键开始的
+
+Makefile有三个非常有用的变量。分别是$@，$^，$<代表的意义分别是：
+
+$@ --目标文件 
+$^ --所有的依赖文件 
+$< --第一个依赖文件
+
+如果我们使用上面三个变量，那么我们可以简化我们的Makefile文件为：
+
+# 这是简化后的Makefile (提示：要用变量，就所有的都用变量，不然就不能正常运行)
+
+main1：main1.o class.o
+
+g++ -o $@ $^
+
+main1.o：main1.c++ class.h
+
+g++ -c $<
+
+class.o: class.c++ class.h
+
+g++ -c $<
+
+clean:
+        rm *.o
+
+经过简化后,我们的Makefile是简单了一点，不过人们有时候还想简单一点。这里我们学习一个Makefile的缺省规则
+
+.c++.o：
+
+g++ -c $<
+
+这个规则表示所有的 .o文件都是依赖与相应的.c++文件的。例如class.o依赖于class.c++这样Makefile还可以变为：
+
+# 这是再一次简化后的Makefile
+
+main1：main1.o class.o
+
+g++ -o $@ $^
+
+.c++.o：
+
+g++ -c $<
+clean:
+        rm *.o
+其实，如果有很多个程序，而又是跨平台时，那就得修改命令，如上面的，假如要修改g++ -c，不知要修改多少呀，为了修改方便，我们可以用变量来代替。如下：
+*******makefile*********
+#started with '#' are comments
+gx="g++ -c"
+main1: main1.o class.o
+        #g++ -o main1 main1.o class.o  
+        g++ -o $@ $^
+main1.o: main1.c++ class.h
+        #g++ -c main1.c++
+        #g++ -c $<
+        $(gx) $<
+class.o: class.c++ class.h
+        g++ -c $<
+clean:
+        rm *.o
+当你没有修改文件，而多次执行make时，将会得到如下的提示
+[zhanghong@localhost c++]$ make
+make: “main1”是最新的。
+假想目标(phony targets)
+  假想目标并不是一个真正的文件名，它仅仅是制定一个具体规则所执行的一些命令的名称。常用的假想目标有all，clean等。
+好了，我们的Makefile 也差不多了，如果想知道更多的关于Makefile的规则，可以查看相应的文档。
+现在我们来看all的使用 
+利用上面的make文件，现在还有一个新的文件需要编译hello.c
+makefile's contents following:
+#makefile ********
+#  begin with '#' display comments
+main1：main1.o class.o
+    g++ -o main1 main1.o class.o
+main1.o: main1.c++ class.h
+    g++ -c main1.c++
+class.o: class.c++ class.h
+    g++ -c class.c++
+hello: hello.c++
+    gcc hello.c -o hello
+all: hello main1
+clean:
+    rm *.o
+#it is over
+现在bash shell下运行make all，将会生成hello, main1两个文件
+现在我们来看看如下的makefile文件
+#makefile file
+CFLAGS := -Wall -O2 
+
+PROGS =\
+    prpids \
+    ids \
+    getname \
+    system \
+    resusg1 \
+    resusg2 \
+    child \
+    execve \
+    waiter \
+    killer \
+    abort \
+    fkill \
+    block \
+    pending
+
+all: $(PROGS)
+
+prpids: prpids.c
+
+ids: ids.c
+
+getname: getname.c
+
+resusg1: resusg1.c
+
+resusg2: resusg2.c
+
+system: system.c
+
+child: child.c
+
+execve: execve.c
+
+waiter: waiter.c
+
+killer: killer.c
+
+abort: abort.c
+
+fkill: fkill.c
+
+block: block.c
+
+pending: pending.c
+
+.PHONY : clean dist
+
+dist : clean
+    tar czf 02152c.tar.gz *.c Makefile
+
+clean:
+    $(RM) $(PROGS) *.o core *.zip *.gz
+#it is over
+源文件是prpids.c ids.c  getname.c system.c resusg1.c resusg2.c child.c execve.c waiter.c  killer.c  abort.c    fkill.c block.c  pending.c
+如果你只想编译其中的一个文件，例如，编译abort.c文件，在shell command line input follow contents:
+$make abort
+就可以了

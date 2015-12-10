@@ -1,0 +1,67 @@
+简单的给mongodb添加用户和认证
+　　Mongodb默认启动是不带认证，也没有账号，只要能连接上服务就可以对数据库进行各种操作，这样可不行。现在，我们得一步步开启使用用户和认证。
+
+　　第一步，我们得定位到mongodb的安装目录。我本机的是C:\mongodb。
+
+　　然后按着shift键右键点击窗口内的空白处，你会看到有个选项 “在此处打开命令窗口” ，一般人我不告诉他^ ^。在cmd内我们使用下面的命令
+
+mongod --auth --logpath "D:\Program Files (x86)\Web\mongodb\log\log.log" --logappend --dbpath "D:\Program Files (x86)\Web\mongodb\data\db" --directoryperdb --reinstall
+重新安装mongodb服务，添加--auth就是告诉mongo我们要开启用户权限认证。安装服务完成后，使用net start mongodb 启动数据库。
+
+　　第二步，还是在mongo的根目录下，在cmd中使用命令
+
+　　> mongo
+
+         MongoDB shell version: 2.2.0
+
+         connecting to: test 
+
+　　> use admin  
+
+　　   switched to db admin 
+
+　　> db.addUser("root", "123456")
+
+　　{ "n" : 0, "connectionId" : 10, "err" : null, "ok" : 1 } 
+
+　　{ 
+
+        "user" : "root", 
+
+        "readOnly" : false, 
+
+        "pwd" : "b7ba7b1291ce2ec8af3099b8f55844a1", 
+
+        "_id" : ObjectId("4f8a558000ab5a9a630c0d31") 
+
+　　} 
+
+　　ok,这样我们就建立好了超级管理员的账号和密码。
+
+ 
+
+　　第三步，登录认证
+
+　　> db.auth("root","123456") 
+
+ 
+
+　　第四步， 查询已添加的用户
+
+　　> db.system.users.find() 
+
+　　{ "_id" : ObjectId("4f8a558000ab5a9a630c0d31"), "user" : "root", "readOnly" : false, "pwd" : "b7ba7b1291ce2ec8af3099b8f55844a1" }
+
+ 
+
+至此，超级管理的账号已添加成功，其他数据库也是同样的操作的。
+
+ 
+
+参考：http://learnmongo.com/posts/quick-tip-mongodb-users/
+
+　　　http://www.sunchis.com/html/db/mongodb/2012/0415/398.html
+
+　　　http://space.itpub.net/22664653/viewspace-715617
+
+标签: MongoDB, mongo, 用户, 权限, 认证

@@ -1,0 +1,192 @@
+现在opengl已经有3.2版本了，Visual c++ 2005自带的opengl sdk才是1.1版本的，想用OpenGL高级版本，去opengl官网转转吧，但那只定义API标准，没有实现，在网上搜OpenGL2.0 SDK OpenGL3.0 SDK，搜了半天也没找到下载地址，终于发现是要用扩展库的方式。
+
+ 
+
+下载glew(The OpenGL Extension Wrangler Library),http://glew.sourceforge.net/index.html
+
+ 
+
+里面的内容:
+
+│ 
+
+├─bin
+
+│      glew32.dll
+
+│      glewinfo.exe          用来查看当前系统的显卡支持opengl的情况
+
+│      glewinfo.txt
+
+│      visualinfo.exe        也是用来查看一些显卡情况
+
+│      visualinfo.txt
+
+│     
+
+├─include
+
+│  └─GL
+
+│          glew.h
+
+│          glxew.h
+
+│          wglew.h
+
+│         
+
+└─lib
+
+        glew32.lib
+
+        glew32s.lib
+
+ 
+
+ 
+
+用法
+
+ 
+
+ 
+
+1.首先引用头文件
+
+#include <gl/glew.h> //必须放在前面
+
+#include <gl/glut.h>
+
+ 
+
+2.初始化
+
+//glew初始化，要放在glutCreateWindow的之后
+
+       GLenum err = glewInit();
+
+       if (GLEW_OK != err)
+
+       {
+
+              /* Problem: glewInit failed, something is seriously wrong. */
+
+              fprintf(stderr, "Error: %s/n", glewGetErrorString(err));
+
+       }
+
+       fprintf(stdout, "Status: Using GLEW %s/n", glewGetString(GLEW_VERSION));
+
+ 
+
+ 
+
+注意：如果使用了的显卡不支持的高级版本OpenGL的函数，运行会崩溃
+
+
+
+ GLEW是一个跨平台的C++扩展库，基于OpenGL图形接口。使用OpenGL的朋友都知道，window目前只支持OpenGL1.1的涵数，但 OpenGL现在都发展到2.0以上了，要使用这些OpenGL的高级特性，就必须下载最新的扩展，另外，不同的显卡公司，也会发布一些只有自家显卡才支 持的扩展函数，你要想用这数涵数，不得不去寻找最新的glext.h,有了GLEW扩展库，你就再也不用为找不到函数的接口而烦恼，因为GLEW能自动识 别你的平台所支持的全部OpenGL高级扩展涵数。也就是说，只要包含一个glew.h头文件，你就能使用gl,glu,glext,wgl,glx的全 部函数。GLEW支持目前流行的各种操作系统（including Windows, Linux, Mac OS X, FreeBSD, Irix, and Solaris）。
+
+
+项目主页： http://glew.sourceforge.net/ 
+文档地址： http://glew.sourceforge.net/install.html 
+下载地址： https://sourceforge.net/project/downloading.php?group_id=67586&filename=glew-1.5.1-src.zip
+================================================================================================================================================
+在OpenGL编程中，使用glMultiTexCoord2f( GL_TEXTURE0+i, x, y ); 你会发现这个函数都没有定义的，以及GL_TEXTURE0，这个常量。因为在vc编译器中,OpenGL的版本是1.1，版本比较落后，下个 glew库就可以了。
+安装的步骤，与glut一模一样，将dll动态链接库放在c:\WINDOWS:\system32;
+头文件，可以搜索一下gl.h,或者gluax.h会发现在编译器(指vc)的安装路径下的，vc:\PlatformSDK:\include \gl文件夹中，将glew放在这里就ok了。
+静态库lib文件的话，放在vc:\PlatformSDK:\Lib文件中。
+如果在使用了glew，但是编译出：没有定义的XXX函数之类的错误，可以在文件开头加上： #pragma comment(lib, "glew32.lib")
+还有一个问题：查看glew.h文件，会发现这么一段话：
+#if defined(__gl_h_) || defined(__GL_H__)
+#error gl.h included before glew.h
+#endif
+这句规定不能在glew之前引用gl.h文件。否则会报错：gl.h included before glew.h
+
+下载地址: http://glew.sourceforge.net/
+
+本文来自CSDN博客，转载请标明出处：http://blog.csdn.net/jisdy/archive/2008/07/29/2730432.aspx
+=====================================================================================================================
+OpenGL Extension Wrangler Library(转)
+
+http://glew.sourceforg.net
+实在不知道Wrangler 应该在这里当什么意思讲，不过他已经被包含到OpenGL SDK了，官方是推荐使用它的。
+GLEW有什么用？你可以把它看作是windows上的OpenGL的基本库，他取代了原来的gl.h wgl.h，让你可以方便的调用最新的OpenGL功能，包括OpenGL众多的Extension。
+实际上我对这个OpenGL的体系也是稀里糊涂，除了核心的概念和功能，对扩展功能基本上是抓瞎的。这就是为什么我要读GLEW的源码。读源码似乎很傻，不过总比等别人出书要聪明的多。
+开始吧。
+基本特性：
+跨操作系统
+支持动态链接、静态库，你还可以把glew.c复制到工程中一起编译
+只依赖于OPENGL32.dll和KERNEL32.dll
+因为不依赖于CRT所有你使用single-threaded, multi-threaded 或者 multi-threaded DLL都没有限制
+文件结构：
+发布版本包括一个glew32.dll和对应的glew32.lib，头文件glew.h和wglew.h。（windows dll版本）。源文件只有一个glew.c。
+glew基本使用：
+初始化
+#include <GL/glew.h>放在一切和gl有关的头文件之前，就完成了引用
+GLenum err = glewInit(); 如果err为真就完成了初始化，应该放在程序的开始部分。现在还是不明白为什么有操作可以早于初始化执行。
+检查扩展
+if (GLEW_ARB_vertex_program)
+{
+/* 通过了ARB_vertex_program extension 的检查. */
+glGenProgramsARB(...);
+}
+if (GLEW_VERSION_1_3)
+{
+/* OpenGL 1.3 是被支持的 */
+}
+if (glewIsSupported("GL_VERSION_1_4 GL_ARB_point_sprite"))
+{
+/* 两个都通过了检查 */
+}
+if (glewGetExtension("GL_ARB_fragment_program"))
+{
+/* 检查ARB_fragment_program 是被支持的. */
+}
+GLEW为了实现扩展检查的功能，编制了大量的代码。简单的看就是即支持宏标签又支持字符串查询。
+glew.h源码结构：
+开头就检测有没有和GLEW冲突的库
+#if defined(__gl_h_) || defined(__GL_H__)
+#error gl.h included before glew.h
+#endif
+#if defined(__glext_h_) || defined(__GLEXT_H_)
+#error glext.h included before glew.h
+#endif
+#if defined(__gl_ATI_h_)
+#error glATI.h included before glew.h
+#endif
+这些文件功能上和GLEW是重复的，所有开始就屏蔽掉了。
+接下来的一堆宏只是为了正确的定义 GLEWAPI GLAPI GLAPIENTRY CALLBACK 等等宏。这些定义本来已经在其他的头文件中定义了，比如WINGDIAPI就在winnt.h中定义过了。这里画蛇添足的做法只是为了保证GLEW的纯洁性，为了不依赖任何不必要的库和头文件。
+再下面就是OpenGL1.1的定义了。这里很简单就是类型定义和宏定义，API使用外部函数方式，这就是为什么不需要gl.h了。
+#define GLEW_VERSION_1_1 GLEW_GET_VAR(__GLEW_VERSION_1_1)
+唯一让人有点不解的是这句，解析了所有的宏之后GLEW_VERSION_1_1被定义为一个GLboolean类型的变量。之后就让人很烦了 __GLEW_VERSION_1_1被初始化为GL_FALSE，然后作者又在检测到支持1.1之后把GLEW_VERSION_1_1赋值为真。宏来宏去的让人郁闷。不过想想也是有道理的，GLEW_VERSION_1_1作为检测标志必须是个宏，而宏是不能修改值的，既然他可能为真也可能为假，那就只有一个办法，找一个变量作为他的存储空间，然后这个宏就可以当变量使用了。
+再下面#include <GL/glu.h>
+再下面是OpenGL1.2的定义，和1.1的定义方式类似，只是函数定义方式不同了。
+typedef void (GLAPIENTRY * PFNGLCOPYTEXSUBIMAGE3DPROC) (GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLint x, GLint y, GLsizei width, GLsizei height);
+typedef void (GLAPIENTRY * PFNGLDRAWRANGEELEMENTSPROC) (GLenum mode, GLuint start, GLuint end, GLsizei count, GLenum type, const GLvoid *indices);
+typedef void (GLAPIENTRY * PFNGLTEXIMAGE3DPROC) (GLenum target, GLint level, GLint internalFormat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLenum format, GLenum type, const GLvoid *pixels);
+typedef void (GLAPIENTRY * PFNGLTEXSUBIMAGE3DPROC) (GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, const GLvoid *pixels);
+#define glCopyTexSubImage3D GLEW_GET_FUN(__glewCopyTexSubImage3D)
+#define glDrawRangeElements GLEW_GET_FUN(__glewDrawRangeElements)
+#define glTexImage3D GLEW_GET_FUN(__glewTexImage3D)
+#define glTexSubImage3D GLEW_GET_FUN(__glewTexSubImage3D)
+4个函数指针定义对应4个define，看名字就知道他们是一一对应的，但是就是对不上，郁闷吧。但是在文件最后的部分能找到这样的代码。
+GLEW_FUN_EXPORT PFNGLCOPYTEXSUBIMAGE3DPROC __glewCopyTexSubImage3D;
+GLEW_FUN_EXPORT PFNGLDRAWRANGEELEMENTSPROC __glewDrawRangeElements;
+GLEW_FUN_EXPORT PFNGLTEXIMAGE3DPROC __glewTexImage3D;
+GLEW_FUN_EXPORT PFNGLTEXSUBIMAGE3DPROC __glewTexSubImage3D;
+也是4个，这下对上号了吧。PFNGLCOPYTEXSUBIMAGE3DPROC 是一个函数指针类型定义 __glewCopyTexSubImage3D是实际被定义的指针函数，#define glCopyTexSubImage3D GLEW_GET_FUN(__glewCopyTexSubImage3D)又指向了glCopyTexSubImage3D 。到最后 glCopyTexSubImage3D 才是真正的API接口。真费劲。
+再往下1.3 1.4 1.5 2.0 2.1 3.0结构完全和1.2一致
+再往下就是各种扩展了，形式上还是和1.2定义的方式一致
+再往下就是GLEW_FUN_EXPORT PFNGLCOPYTEXSUBIMAGE3DPROC __glewCopyTexSubImage3D;等等了。
+再往下是GLEW_VAR_EXPORT GLboolean __GLEW_VERSION_1_1;等等。
+最后才是GLEW的主要函数接口。这里支持一个GLEW_MX的定义，就是对GLEW MX的支持。
+glew.c源码结构：
+相对简单的多，除了一些函数的实现以外，全是初始化函数。
+全部都是从glewInit开始的，一路下去初始化各个版本和所有扩展。
+wglew
+看明白上面的，这里就不用说了，比葫芦看瓢吧
+ 
+ 
+本文直接转自：http://www.cnblogs.com/madfrog/archive/2010/06/25/1765259.html
