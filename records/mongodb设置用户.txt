@@ -1,0 +1,19 @@
+use admin
+db.createUser(
+   {
+     user: "cat",
+     pwd: "run",
+     roles:
+       [
+         { role: "readWrite", db: "config" },
+         "clusterAdmin"
+       ]
+   }
+)
+
+
+
+创建admin用户
+修改注册表用户登录才能操作数据库
+
+E:\mongodb\bin\mongod.exe --config e:\mongodb\etc\mongodb.conf --auth --service
