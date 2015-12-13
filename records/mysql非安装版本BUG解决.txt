@@ -1,0 +1,28 @@
+使用mysqld --install --default-file=XXX 之前应当先对数据库进行初始化
+
+官方说明
+Initializing the Data Directory Manually Using mysqld
+
+The procedure described here is available for all platforms as of MySQL 5.7.6. Prior to 5.7.6, use mysql_install_db on Unix and Unix-like systems (see Section 2.10.1.2, “Initializing the Data Directory Manually Using mysql_install_db”). Prior to MySQL 5.7.7, Windows distributions include a data directory with prebuilt tables in the mysql database.
+
+C:\> bin\mysqld --initialize
+C:\> bin\mysqld --initialize-insecure
+
+
+
+但是服务还是没有安装成功 
+
+原因待找
+
+
+---过了一段时间看 服务也安装成功了 折腾了2天终于安装好了mysql 5.7
+
+
+设置root密码
+
+SET PASSWORD FOR 'root'@'localhost' = PASSWORD('root');
+
+创建用户
+create user 'xxx' identified by 'xxxxx';
+设置权限
+grant all on *.* to xxx;
