@@ -1,0 +1,20 @@
+非安装版本 必须先对数据库进行初始化后 才能创建服务
+
+
+mysqld中指定字符集只能用character-set-server=utf8
+
+而show variables like "%char%"中 其他的几个字符集 还没办法改
++--------------------------+--------------------------+
+| Variable_name            | Value                    |
++--------------------------+--------------------------+
+| character_set_client     | utf8                     |
+| character_set_connection | utf8                     |
+| character_set_database   | utf8                     |
+| character_set_filesystem | binary                   |
+| character_set_results    | utf8                     |
+| character_set_server     | utf8                     |
+| character_set_system     | utf8                     |
+| character_sets_dir       | F:\mysql\share\charsets\ |
++--------------------------+--------------------------+
+
+不过好像通过[mysql] 下的参数能指定default-character-set=utf8
