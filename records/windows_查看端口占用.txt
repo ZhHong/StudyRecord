@@ -1,0 +1,5 @@
+-- netstat -ano 查看所有端口占用情况
+-- netstat -aon|findstr "9050" 查看特定端口占用情况
+协议    本地地址                     外部地址               状态                   PID
+  TCP    127.0.0.1:9050         0.0.0.0:0              LISTENING       2016
+-- tasklist|findstr "2016" 查看对应进程占用端口 
