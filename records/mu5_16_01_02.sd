@@ -1,0 +1,15 @@
+1，ui界面混乱后可以用 defaults 菜单中的default进行重置,修改游戏运行时候的背景色Edit->Prefences->Colors
+2, tag 和 名字
+3，添加脚本  assets中添加脚本 关联到游戏对象上---1,直接拖拽 2，add Componet
+	修改默认脚本编辑器 Edit->Prefences->External tools
+4,添加visual studio支持  Assets--->import package
+	visual studio 主要用于调试
+5,查看MonoBehavior 所有声明的API方法 
+6，游戏设计蓝图 
+
+
+-----------------------------
+--- standard sharder 
+
+
+--- skybox

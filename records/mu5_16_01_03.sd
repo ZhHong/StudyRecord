@@ -1,0 +1,19 @@
+1, 鼠标事件添加
+
+vidio url http://v.ku6.com/show/VgWlUH0esaJwClViBILCkQ...html
+
+添加Button  
+添加脚本
+添加UI Empty GameObj
+将UI关联到Button上，选择执行函数
+
+
+输入加入密码 在inputField 的content type 设置成password即可
+
+
+unity5 获取InputField 文本的方法
+
+添加文本后，使用On end edit事件  选择事件处理函数的时候 要注意选择动态String作为参数 这样 输入结束后 就会将这个字符串传输到 指定的处理函数
+
+unity5 网络编程URL
+http://blog.csdn.net/zhou_xw6511/article/details/8464157
