@@ -1,0 +1,6 @@
+sudo apt-get install git-core openssh-server openssh-client
+sudo apt-get install git-core git-gui git-doc 
+
+
+http://forthxu.com/blog/skynet.html
+
