@@ -1,0 +1,8 @@
+mysql
+
+-- sudo apt-get install mysql-server mysql-client
+
+
+mongodb
+
+-- sudo apt-get install mongo
