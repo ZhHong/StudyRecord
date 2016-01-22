@@ -1,0 +1,47 @@
+install --mysql
+
+sudo apt-get install mysql-server mysql-client
+
+install --mongodb
+sudo apt-get install mongodb
+
+
+skynet deps
+sudo apt-get install autoconf
+sudo apt-get install libreadline-dev
+
+git
+sudo apt-get install git
+
+set shell encode 
+:set ff=unix
+:wq
+
+Lua compile
+luac -o outfile luafile
+
+-- git use
+-- update-------------------------------
+git clone url location
+git pull url -- get git merge local
+
+git config --global user.name 'username'
+git config --global user.email 'email@none'
+
+--commit--------------------------------
+git init --init local project
+git add fileName/dirname  --add to commit
+git commit -m 'first commit'
+git commit -a -- auto update commit
+git remote add ResName url -- add remote server project name
+git remote rm ResName -- delete remote project
+git push -u Remotename master --cmmit to remote project
+--branch--------------------------------------
+git branch  -- show current branch
+git branch new_feature --create new branch
+git checkout new-feature --change to new-feature
+
+git checkout master  ---change to master
+git merge new-feature ---merge new-feature to master
+git branch
+git push  --commit to remote server
