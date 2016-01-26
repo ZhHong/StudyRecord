@@ -45,3 +45,31 @@ git checkout master  ---change to master
 git merge new-feature ---merge new-feature to master
 git branch
 git push  --commit to remote server
+
+
+---ubuntu set root password
+--sudo passwd root
+
+
+
+install server---
+-- install openssl ---------
+sudo apt-get install openssl 
+sudo apt-get install libssl-dev
+-- install auto make--------
+sudo apt-get install aptitude  
+sudo aptitude install libtool 
+-- install python27---------
+sudo apt-get install python-dev
+
+-- mysql dev install----
+sudo apt-get install libmysqlclient-dev
+
+
+-- pthread dev install----
+sudo apt-get install glibc-doc
+sudo apt-get install manpages-posix-dev
+
+compile bug fix 
+http://stackoverflow.com/questions/22180354/why-am-i-getting-undefined-reference-to-pthread-mutexattr-settype
+
