@@ -73,3 +73,5 @@ sudo apt-get install manpages-posix-dev
 compile bug fix 
 http://stackoverflow.com/questions/22180354/why-am-i-getting-undefined-reference-to-pthread-mutexattr-settype
 
+--- link object error---------------
+http://www.cnblogs.com/little-ant/p/3398885.html
