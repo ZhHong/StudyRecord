@@ -1,0 +1,31 @@
+Todo
+1,add skynet to unity
+2,add prolog
+
+a,server need openssl static lib
+	get source code from github
+	make depend
+	./Configure linux-x86_x64 no-shared -fPIC
+	make
+	make install -- need root
+	--->get *.a lib
+
+	./config linux-x86_x64 shared -fPID
+	make
+	make install
+	--->get *.so 
+
+b,metoo
+	need download lua5.2.3 and make it install it can pass compile
+
+-- TODO add function create mysql database auto
+maybe:
+	1,connect to mysql
+	2,read sql file
+	3,run sql query to create database
+
+	#1 format sql
+	#2 read
+	#3 splite sql statement
+	#4 run statement
+	
