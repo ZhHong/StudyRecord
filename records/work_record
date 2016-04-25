@@ -78,3 +78,40 @@ http://www.cnblogs.com/little-ant/p/3398885.html
 
 --- c变长数组data[0] -------
 http://www.cnblogs.com/Anker/p/3744127.html
+
+--- window bash 错误解决--------------
+错误提示：
+W: Failed to fetch http://cn.archive.ubuntu.com/ubuntu/dists/trusty-security/Release.gpg  Could not resolve 'cn.archive.ubuntu.com'
+解决步骤：
+1，修改更新源(我的更新源为空。。。好像是呗我删掉了)
+vi /etc/apt/sources.list
+deb http://cn.archive.ubuntu.com/ubuntu/ trusty main restricted
+deb-src http://cn.archive.ubuntu.com/ubuntu/ trusty main restricted
+deb http://cn.archive.ubuntu.com/ubuntu/ trusty-updates main restricted
+deb-src  http://cn.archive.ubuntu.com/ubuntu/ trusty-updates main restricted
+deb http://cn.archive.ubuntu.com/ubuntu/ trusty universe
+deb-src http://cn.archive.ubuntu.com/ubuntu/ trusty universe
+deb http://cn.archive.ubuntu.com/ubuntu/ trusty-updates universe
+deb-src http://cn.archive.ubuntu.com/ubuntu/ trusty-updates universe
+deb http://cn.archive.ubuntu.com/ubuntu/ trusty multiverse
+deb-src http://cn.archive.ubuntu.com/ubuntu/ trusty multiverse
+deb http://cn.archive.ubuntu.com/ubuntu/ trusty-updates multiverse
+deb-src http://cn.archive.ubuntu.com/ubuntu/ trusty-updates multiverse
+deb http://cn.archive.ubuntu.com/ubuntu/ trusty-backports main restricted universe multiverse
+deb-src http://cn.archive.ubuntu.com/ubuntu/ trusty-backports main restricted universe multiverse
+deb http://cn.archive.ubuntu.com/ubuntu trusty-security main restricted
+deb-src http://cn.archive.ubuntu.com/ubuntu trusty-security main restricted
+deb http://security.ubuntu.com/ubuntu trusty-security main restricted
+deb-src http://security.ubuntu.com/ubuntu trusty-security main restricted
+deb http://security.ubuntu.com/ubuntu trusty-security universe
+deb-src http://security.ubuntu.com/ubuntu  trusty-security universe
+deb http://security.ubuntu.com/ubuntu trusty-security multiverse
+deb-src http://security.ubuntu.com/ubuntu trusty-security multiverse
+#deb http://cn.archive.ubuntu.com/ubuntu trusty trusty-proposed
+#deb-src http://cn.archive.ubuntu.com/ubuntu trusty trusty-proposed
+
+2，修改resolv.conf
+vi /etc/resolv.conf
+nameserver 202.96.134.133
+nameserver 202.96.128.68
+nameserver 192.168.1.1
