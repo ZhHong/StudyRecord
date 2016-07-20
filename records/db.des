@@ -1,0 +1,26 @@
+Data db  数据数据库
+table
+account (int acountId,varchar acountName,varchar acountPassword,int reg_time, int last_log_time,)
+table 
+game_code (int id,varchar name,int create_time, int create_account)
+
+table
+game_market (int market_id,int code_id,varchar maket_name,int create_time, int create_account)
+
+table
+goods_classes (int market_id,int goods_type,varchar goods_type_name,int parent_type,int create_time, int create_account)
+
+table
+goods_type(int goods_type,int goods_id, varchar goods_name, int create_time, int create_account)
+
+table
+goods_info(int goods_id, int min_value,int max_value, int num, int insert_time,int insert_account)
+
+Log db  日志数据库
+
+account_log (int index,int log_account_id,log_type,log_value,int insert_time)
+game_code_log
+game_market_log
+goods_class_log
+goods_log
+

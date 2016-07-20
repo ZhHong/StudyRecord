@@ -1,0 +1,39 @@
+1,依赖项 --- Visual C++ Redistributable for Visual Studio 2012 Update 4
+
+2,安装Apache24
+	修改--http.conf
+	1)修改ServerRoot  Apache根路径
+	  Define SRVROOT "d:/phpenv/Apache24"
+	  ServerRoot "${SRVROOT}"
+	2)修改主机名称...
+	3)DocumentRoot Apache访问的主文件目录
+	  DocumentRoot "D:\phpEnv\www"
+	  <Directory "D:\phpEnv\www">
+	4)修改入口文件配置:DirectoryIndex
+	 <IfModuledir_module>
+	  DirectoryIndex  index.php index.htm index.html
+	 </IfModule>
+	5)设定serverscript的目录
+	 ScriptAlias/cgi-bin/ "D:/phpEnv/Apache24/cgi-bin"
+	6)<Directory"D:/phpEnv/Apache24/cgi-bin">
+	   AllowOverride None
+	   Options None
+	   Require all granted
+	  </Directory>
+	 
+	 7)将apache安装成windows服务
+	  a,添加 httpd.exe -k install -n "ServiceName"
+	  b,移除 httpd.exe -k uninstall -n "ServiceName"
+	ApacheMonitor 也可以用来启动Apache
+3,安装php5
+
+1)，extension_dir  extension_dir = "D:\phpenv\php\ext"
+2), 修改 date.timezone =Asia/Shanghai
+3), Apache confg下新增
+	# php5 suport
+	LoadModule php5_module D:/phpEnv/php/php5apache2_4.dll
+	AddType application/x-httpd-php .php .html .htm
+	# configure thepath to php.ini
+	PHPIniDir "D:/phpenv/php"
+
+
